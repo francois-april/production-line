@@ -5,7 +5,7 @@ use App\Http\Controllers\ScheduleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('orders.create');
+    return redirect('/orders/create');
 });
 
 Route::resource('orders', OrderController::class);

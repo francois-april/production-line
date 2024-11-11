@@ -39,13 +39,6 @@ class ScheduleController extends Controller
                 $scheduledOrders[] = $orders[$i]->id;
                 $schedule = $this->addOrder($schedule, $orders[$i], $currentTime);
                 $currentTime += $orders[$i]->getProductionTime();
-                // if ($i == 1) {
-                //     dd(in_array($orders[$i + 1]->id, $scheduledOrders));
-                // }
-                // $nextOrderIndex = $i + 1;
-                // foreach () {
-                    
-                // }
                 for ($j = $i + 1; $j < $orders->count(); $j++) {
                     if (isset($orders[$j]) && !in_array($orders[$j]->id, $scheduledOrders)) {
                         if ($orders[$i]->product_type_id == $orders[$j]->product_type_id) {

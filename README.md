@@ -1,66 +1,35 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Libraries and technologies used
+The entire proeject was built using Sail through docker, to facilitate setting up the environment (https://github.com/laravel/sail)
+Bootstrap for frontend elements in blade (https://getbootstrap.com/)
+Bladewindui for the timeline view (https://bladewindui.com/)
+Livewire to build dynamic components in the order creation page (https://github.com/livewire/livewire)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Assumptions and arbitrary choices
+- Products, product types and clients have a name
+- Products and product types are shared between all clients
+- Orders are client-specific
+- While I did add a product_type to the order object, I thought of the possibility that one day, orders might not be restricted to a singular product type. With forward compatibility in mind, where possible, I tried to access the product type of order items by way of their relation with the product object, rather than through the order object (for example, $orderItem->product->productType, as opposed to $orderItem->order->ProductType)
+- An order item represents an amount of instances of a specific product to be produced as part of an order
+- The schedule viewer will show the production schedule for all items from all clients
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Design decisions && thought process
+1) I started by creating the database migrations for everything mentioned in the instructions, as well as the eloquent models representing them.
+2) I seeded the database with the clients, product types and products from the instructions. [php artisan migrate] and [php artisan db:seed] create and populate the databse with the elements mentioned in the instructions,
+   but no orders or order items are created at this step.
+3) I build routes, controllers and empty views for the order creation and schedule viewing
+4) I built the order creation page, at first without validations or error handling, and only allowing a set number of items to be added to the order.
+5) I created a very basic algorithm that simply arranged the orders from nearest to furthest "need by" date, while placing changeover delays where needed, and created a simple view that displayed the order schedule, and information about every order.
+6) I went back to the order creation page and added a button to dynamically new items to the order being created. I initially planned to write that part in javascript, but decided to use Livewire, which I was familiar with, to save time.
+7) I went back to the algorithm and modified it so that it prioritizes the need by date but also tries to group orders with the same product type to avoid changeover delays when time allows.
+   If processing the next order with the earliest need by date would incur a changeover delay, without making it finish late, it tries to process as many orders that dont require a changeover delay as possible.
+8) I used a Bladewindui template to build a more visual representation of the timeline, estimating the start time and duration of each order, changeover delay, and even each individual item within an order.
+9) I went back and added basic validations to the order creation form. I created a StoreOrderRequest class to specify the validations, as it is in my opinion preferable as a project grows to avoid clutter in the controllers.
+10) I created a navbar to navigate bertween the 2 pages of the project
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Next steps if I had more time && What I would do differently in hindsight
+1) The next thing I would have done would have been to create some kind of presentation model to send the information needed to the schedule view, to avoid using large arrays and to better encapsulate the data.
+2) Given more time, I would further optimize the scheduling algorithm. I have transformed part of it into different functions to avoid clutter, but it remains large and difficult to read due to the large amount of variables.
+3) With more time, I would have created simple pages to veiw a list of orders and order items, and pages to edit or delete them. There currently exists and empty /orders that only contais the navbar.
+4) I ran into an issue where I opted to use arrays to avoid having dynamic variable names in the request coming from the create order form. this made it more difficult to create validation rules the "order items" part of the form.
+   Given more time, I would try to find another solution to send the inputs through the forms or simply use a javascript library like react for the frontend of the application.
