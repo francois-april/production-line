@@ -1,8 +1,12 @@
 ## Libraries and technologies used
-The entire proeject was built using Sail through docker, to facilitate setting up the environment (https://github.com/laravel/sail)
-Bootstrap for frontend elements in blade (https://getbootstrap.com/)
-Bladewindui for the timeline view (https://bladewindui.com/)
-Livewire to build dynamic components in the order creation page (https://github.com/livewire/livewire)
+The entire proeject was built using Sail through docker, to facilitate setting up the environment
+(https://github.com/laravel/sail)
+Bootstrap for frontend elements in blade
+(https://getbootstrap.com/)
+Bladewindui for the timeline view
+(https://bladewindui.com/)
+Livewire to build dynamic components in the order creation page
+(https://github.com/livewire/livewire)
 
 ## Assumptions and arbitrary choices
 - Products, product types and clients have a name
