@@ -37,3 +37,28 @@ Livewire to build dynamic components in the order creation page
 3) With more time, I would have created simple pages to veiw a list of orders and order items, and pages to edit or delete them. There currently exists and empty /orders that only contais the navbar.
 4) I ran into an issue where I opted to use arrays to avoid having dynamic variable names in the request coming from the create order form. this made it more difficult to create validation rules the "order items" part of the form.
    Given more time, I would try to find another solution to send the inputs through the forms or simply use a javascript library like react for the frontend of the application.
+
+## Instructions to run the project on windows
+
+1) Install wsl and docker
+2) in the wsl environment, clone the repository
+3) In the repository folder, run the following command, without the quotes:
+   "docker run --rm \
+   -u "$(id -u):$(id -g)" \
+   -v "$(pwd):/var/www/html" \
+   -w /var/www/html \
+   laravelsail/php83-composer:latest \
+   composer install --ignore-platform-reqs"
+4) In the repository folder, run the following command, without the quotes:
+   "./vendor/bin/sail up"
+5) In the repository folder, copy teh contents of the .env.example file into a newly created .env file
+This terminal shell is now displaying Sail's information and is unusable without shutting down the docker container
+5) In a new terminal, in the repository folder, run the following command, without the quotes:
+   "./vendor/bin/sail shell"
+6) In the sail shell, run the 3 following commands, without the quotes:
+   "php artisan key:generate"
+   "php artisan migrate"
+   "php artisan db:seed"
+
+The project should now run properly
+   
